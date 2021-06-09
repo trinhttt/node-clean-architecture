@@ -8,50 +8,15 @@ export const quoteRepo = {
             name: name,
             quote: quote,
         });
-        return new Promise((resolve, reject) => {
-            newQuote
-                .save()
-                .then(newQuoteObj => resolve(newQuoteObj))
-                .catch(error => reject(error));
-        });
+        return await newQuote.save();
     },
     async getAllQuotes() {
-        return new Promise((resolve, reject) => {
-            Quote
-                .find()
-                .then(allQuotes => resolve(allQuotes))
-                .catch(error => reject(error));
-        });
+        return await Quote.find();
     },
     async updateQuote(name, updateObject) {
-        return new Promise((resolve, reject) => {
-            Quote.
-                findOneAndUpdate({ name: name }, updateObject)
-                .exec()
-                .then(() => resolve(updateObject))
-                .catch(error => reject(error));
-        });
+        return await Quote.findOneAndUpdate({ name: name }, updateObject)
     },
     async deleteQuote(id) {
-        return new Promise((resolve, reject) => {
-            Quote.
-                findByIdAndRemove(id)
-                .exec()
-                .then((result) => {
-                    console.log(result)
-                    if (result == null) {
-                        resolve({
-                            success: false,
-                            message: 'Can not find this quote',
-                        })
-                    } else {
-                        resolve({
-                            success: true,
-                            message: 'Quote was deleted',
-                        })
-                    }
-                })
-                .catch(error => reject(error));
-        });
+        return await Quote.findByIdAndRemove(id);
     }
 }

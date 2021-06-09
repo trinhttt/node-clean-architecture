@@ -11,59 +11,25 @@ export const userRepo = {
             gender: reqBody.gender,
             phone: reqBody.phone,
         })
-        return new Promise((resolve, reject) => {
-            newUser
-                .save()
-                .then(newUserObj => resolve(newUserObj))
-                .catch(error => reject(error));
-        });
+        return await newUser.save();
+        // return new Promise((resolve, reject) => {
+        //     newUser
+        //         .save()
+        //         .then(newUserObj => resolve(newUserObj))
+        //         .catch(error => reject(error));
+        // });
     },
     
     async getAllUsers() {
-        return new Promise((resolve, reject) => {
-            User
-                .find()
-                .then(allUsers => resolve(allUsers))
-                .catch(error => reject(error));
-        });
+        return await User.find();
     },
     async getSingleUser(id) {
-        return new Promise((resolve, reject) => {
-            User
-                .findById(id)
-                .then(singleUser => resolve(singleUser))
-                .catch(error => reject(error));
-        });
+        return User.findById(id);
     },
     async updateUser(username, updateObject) {
-        return new Promise((resolve, reject) => {
-            User.
-                findOneAndUpdate({ username: username }, updateObject)
-                .exec()
-                .then(() => resolve(updateObject))
-                .catch(error => reject(error));
-        });
+        return await User.findOneAndUpdate({ username: username }, updateObject);
     },
     async deleteUser(id) {
-        return new Promise((resolve, reject) => {
-            User.
-                findByIdAndRemove(id)
-                .exec()
-                .then((result) => {
-                    console.log(result)
-                    if (result == null) {
-                        resolve({
-                            success: false,
-                            message: 'Can not find this user',
-                        })
-                    } else {
-                        resolve({
-                            success: true,
-                            message: 'User was deleted',
-                        })
-                    }
-                })
-                .catch(error => reject(error));
-        });
+        return await User.findByIdAndRemove(id);
     }
 }

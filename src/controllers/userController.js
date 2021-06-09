@@ -56,9 +56,11 @@ export const userController = {
         try {
             const id = req.params._id;
             const resultObject = await userService.deleteUser(id);
+            const success = resultObject == null ? false : true
+            const message = resultObject == null ? 'Can not find this user' : 'User was deleted'
             res.status(200).json({
-                success: resultObject.success,
-                message: resultObject.message,
+                success: success,
+                message: message,
             });
         } catch (error) {
             next(error);
