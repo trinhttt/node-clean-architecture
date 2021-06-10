@@ -69,8 +69,10 @@ export const userController = {
     async findUsers(req, res, next) {
         try {
             const resultObject = await userService.findUsers(req.params);
+            let total = await userService.countAllUsers();
             const itemsPerPage = req.params.limit;
             const currentPage = req.params.offset / itemsPerPage + 1;
+            const totalPages = total / itemsPerPage;
             console.log(currentPage, resultObject.length, itemsPerPage);
             res.status(200).json({
                 success: true,
@@ -80,8 +82,8 @@ export const userController = {
                     currentPage: currentPage,
                     itemCount: resultObject.length,
                     itemsPerPage: itemsPerPage,
-                    totalItems: 0,//??
-                    totalPages: 0,//??
+                    totalItems: total,
+                    totalPages: totalPages,
                 },
             });
         } catch (error) {

@@ -18,5 +18,8 @@ export const userService = {
     },
     async findUsers(searchParams) {
         return await userRepo.findUsers(searchParams);
+    },
+    async countAllUsers() {
+        return await userRepo.countAllUsers();
     }
 }

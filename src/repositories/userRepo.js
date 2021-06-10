@@ -52,13 +52,17 @@ export const userRepo = {
     // ===> Full HD: https://mongoosejs.com/docs/api.html#query_Query-sort
     async findUsers(searchParams) {
         const { key, limit, offset, order_by, order_direction } = searchParams;
-        const sort = Number(order_direction) === 1 ? '' : '-'
+        let sortOrder = {};
+        sortOrder[`${order_by}`] = order_direction;
         var query = User.find({ isdeleted: 0, firstname: { $regex: key } })
             .select('phone firstname email isdeleted')
             .limit(Number(limit))
             .skip(Number(offset))
-            .sort(`${sort}${order_by}`)
+            .sort(sortOrder)// .sort(`${sort}${order_by}`)
         console.log(query)
         return await query.exec();
+    },
+    async countAllUsers() {
+        return await User.count();
     }
 }
