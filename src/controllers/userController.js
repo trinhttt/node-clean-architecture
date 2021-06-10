@@ -69,11 +69,11 @@ export const userController = {
     async findUsers(req, res, next) {
         try {
             const resultObject = await userService.findUsers(req.params);
-            let total = await userService.countAllUsers();
+            const total = await userService.countAllUsers();
             const itemsPerPage = req.params.limit;
             const currentPage = req.params.offset / itemsPerPage + 1;
-            const totalPages = total / itemsPerPage;
-            console.log(currentPage, resultObject.length, itemsPerPage);
+            const totalPages = total % itemsPerPage == 0 ? total / itemsPerPage : Math.floor(total / itemsPerPage) + 1;
+            console.log(currentPage, resultObject.length, itemsPerPage, totalPages);
             res.status(200).json({
                 success: true,
                 message: 'Got an user list',
