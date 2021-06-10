@@ -19,7 +19,7 @@ export const userRepo = {
         //         .catch(error => reject(error));
         // });
     },
-    
+
     async getAllUsers() {
         return await User.find();
     },
@@ -31,5 +31,34 @@ export const userRepo = {
     },
     async deleteUser(id) {
         return await User.findByIdAndRemove(id);
+    },
+
+    /**
+     * 
+     * @param {*} searchParams 
+     * search => từ để tìm kiếm
+     * limit => số record tối đa
+     * offset => bắt đầu từ record thứ mấy
+     * order_by => sort field nào
+     * order_direction => ('asc' hoặc 'desc') => sort theo thứ tự nào?
+     * @returns 
+     */
+
+    // 1/'asc'/'ascending': 1/1 -> 2/1 -> 3/1 or 
+    // {$regex: key}: contain key
+    // limit(2): limit to 2 items
+    // sort: ignore records from 1(start) to offset
+    // skip(offset):  skip the first offset items
+    // ===> Full HD: https://mongoosejs.com/docs/api.html#query_Query-sort
+    async findUsers(searchParams) {
+        const { key, limit, offset, order_by, order_direction } = searchParams;
+        const sort = Number(order_direction) === 1 ? '' : '-'
+        var query = User.find({ isdeleted: 0, firstname: { $regex: key } })
+            .select('phone firstname email isdeleted')
+            .limit(Number(limit))
+            .skip(Number(offset))
+            .sort(`${sort}${order_by}`)
+        console.log(query)
+        return await query.exec();
     }
 }

@@ -15,5 +15,8 @@ export const userService = {
     },
     async deleteUser(id) {
         return await userRepo.deleteUser(id);
+    },
+    async findUsers(searchParams) {
+        return await userRepo.findUsers(searchParams);
     }
 }

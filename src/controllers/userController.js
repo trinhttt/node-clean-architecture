@@ -65,6 +65,28 @@ export const userController = {
         } catch (error) {
             next(error);
         }
-    }
+    },
+    async findUsers(req, res, next) {
+        try {
+            const resultObject = await userService.findUsers(req.params);
+            const itemsPerPage = req.params.limit;
+            const currentPage = req.params.offset / itemsPerPage + 1;
+            console.log(currentPage, resultObject.length, itemsPerPage);
+            res.status(200).json({
+                success: true,
+                message: 'Got an user list',
+                data: {
+                    items: resultObject,
+                    currentPage: currentPage,
+                    itemCount: resultObject.length,
+                    itemsPerPage: itemsPerPage,
+                    totalItems: 0,//??
+                    totalPages: 0,//??
+                },
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
 }
       

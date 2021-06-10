@@ -17,6 +17,6 @@ router.get("/users", userController.getAllUsers);
 router.get("/users/:_id", userController.getSingleUser);
 router.put("/users/:username", userController.updateUser);
 router.delete("/users/:_id", userController.deleteUser);
-
+router.get("/users/search/:key/:limit/:offset/:order_by/:order_direction", userController.findUsers);
 
 export default router;
