@@ -34,7 +34,7 @@ export const userRepo = {
     },
 
     /**
-     * 
+     * //?key=&limit=&offset=&order_by=&order_direction=
      * @param {*} searchParams 
      * search => từ để tìm kiếm
      * limit => số record tối đa
@@ -50,16 +50,28 @@ export const userRepo = {
     // sort: ignore records from 1(start) to offset
     // skip(offset):  skip the first offset items
     // ===> Full HD: https://mongoosejs.com/docs/api.html#query_Query-sort
+
+    /**
+     *  Operators that the schema supports
+        $all, $eq, $exists, $gt, $gte, $in, $lt, $lte, 
+        $ne, $nin, $not, $options, $regex, $type 
+     */
     async findUsers(searchParams) {
         const { key, limit, offset, order_by, order_direction } = searchParams;
         let sortOrder = {};
         sortOrder[`${order_by}`] = order_direction;
-        var query = User.find({ isdeleted: 0, firstname: { $regex: key } })
+        let filterQuery = {};
+        filterQuery = [];
+        filterQuery.push({firstname: {$regex:key, $options:'i'}});
+        filterQuery.push({email: {$regex:key, $options:'i'}});
+        filterQuery.push({isdeleted: 0});
+        console.log(filterQuery);
+        // var query = User.find().or({ isdeleted: 0, filterQuery })//isdeleted and filterQuery
+        var query = User.find().or(filterQuery)
             .select('phone firstname email isdeleted')
             .limit(Number(limit))
             .skip(Number(offset))
             .sort(sortOrder)// .sort(`${sort}${order_by}`)
-        console.log(query)
         return await query.exec();
     },
     async countAllUsers() {

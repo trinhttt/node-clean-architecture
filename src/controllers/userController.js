@@ -12,18 +12,6 @@ export const userController = {
             next(error);
         }
     },
-    async getAllUsers(req, res, next) {
-        try {
-            const allUsers = await userService.getAllUsers();
-            res.status(200).json({
-                success: true,
-                message: 'Got list',
-                users: allUsers,
-            });
-        } catch (error) {
-            next(error);
-        }
-    },
     async getSingleUser(req, res, next) {
         try {
             const id = req.params._id;
@@ -41,7 +29,7 @@ export const userController = {
         try {
             const username = req.params.username;
             const updateObject = req.body;
-        
+
             const updateUser = await userService.updateUser(username, updateObject);
             res.status(200).json({
                 success: true,
@@ -66,29 +54,41 @@ export const userController = {
             next(error);
         }
     },
-    async findUsers(req, res, next) {
+    async getUsers(req, res, next) {
+        console.log("findUsers");
         try {
-            const resultObject = await userService.findUsers(req.params);
-            const total = await userService.countAllUsers();
-            const itemsPerPage = req.params.limit;
-            const currentPage = req.params.offset / itemsPerPage + 1;
-            const totalPages = total % itemsPerPage == 0 ? total / itemsPerPage : Math.floor(total / itemsPerPage) + 1;
-            console.log(currentPage, resultObject.length, itemsPerPage, totalPages);
-            res.status(200).json({
-                success: true,
-                message: 'Got an user list',
-                data: {
-                    items: resultObject,
-                    currentPage: currentPage,
-                    itemCount: resultObject.length,
-                    itemsPerPage: itemsPerPage,
-                    totalItems: total,
-                    totalPages: totalPages,
-                },
-            });
+            console.log(req.query)
+            if (req.query == null) {
+                const allUsers = await userService.getAllUsers();
+                res.status(200).json({
+                    success: true,
+                    message: 'Got list',
+                    users: allUsers,
+                });
+            } else {
+                console.log(req.query)
+                const resultObject = await userService.findUsers(req.query);
+                const total = await userService.countAllUsers();
+                const itemsPerPage = req.query.limit;
+                const currentPage = req.query.offset / itemsPerPage + 1;
+                const totalPages = total % itemsPerPage == 0 ? total / itemsPerPage : Math.floor(total / itemsPerPage) + 1;
+                console.log(currentPage, resultObject.length, itemsPerPage, totalPages);
+                res.status(200).json({
+                    success: true,
+                    message: 'Got an user list',
+                    data: {
+                        items: resultObject,
+                        currentPage: currentPage,
+                        itemCount: resultObject.length,
+                        itemsPerPage: itemsPerPage,
+                        totalItems: total,
+                        totalPages: totalPages,
+                    },
+                });
+            }
         } catch (error) {
             next(error);
         }
     },
 }
-      
+
