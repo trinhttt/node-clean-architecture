@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 mongoose.Promise = global.Promise;
 const userSchema = new mongoose.Schema({
+    // _id: mongoose.Schema.Types.ObjectId,
     email: {
         type: String,
         required: true,
@@ -12,7 +13,6 @@ const userSchema = new mongoose.Schema({
         required: true,
         maxlength: 100,
         minlength: 5,
-        unique: true
     },
     password: {
         type: String,
