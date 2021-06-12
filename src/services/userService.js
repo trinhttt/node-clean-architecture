@@ -21,5 +21,14 @@ export const userService = {
     },
     async countAllUsers() {
         return await userRepo.countAllUsers();
+    },
+    async login(username, password) {
+        let user = await userRepo.getUserByUserName(username);
+        if (!user) {
+            return null;
+        } else {
+            await user.validPassword(password);
+            return user.toAuthJSON();
+        }
     }
 }

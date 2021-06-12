@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import router from './src/routes/index.js'
 import dotenv from 'dotenv';
 import errorHandler from './src/middlewares/errorHandler.js';
-import connectToDb from "./src/config/db.js";
+import connectToDb from "./src/db/index.js";
 
 dotenv.config();
 const app = express();
@@ -13,7 +13,7 @@ connectToDb();
 app.use(express.urlencoded({
     extended: true
 }));
-app.use('/api/', router);
+app.use('/api', router);//?? why /api/ is also ok??
 app.listen(port, function () {
     console.log('Listening on 3000')
 })

@@ -57,8 +57,9 @@ export const userController = {
     async getUsers(req, res, next) {
         console.log("findUsers");
         try {
-            console.log(req.query)
-            if (req.query == null) {
+            //?? req.query = {} but (req.query == null) is SOMETIME wrong
+            if (req.query == null || 
+                (typeof req.query === 'object' && Object.keys(req.query).length === 0)) {
                 const allUsers = await userService.getAllUsers();
                 res.status(200).json({
                     success: true,
@@ -90,5 +91,24 @@ export const userController = {
             next(error);
         }
     },
+    async login(req, res, next) {
+        try {
+            const { username, password } = req.body;
+            const userInfo = await userService.login(username, password);
+            if (userInfo == null) {
+                res.status(200).json({
+                    success: false,
+                    message: 'Login fail',
+                });
+            }
+            res.status(201).json({
+                success: true,
+                message: 'Login successfully',
+                user: userInfo,
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 

@@ -4,6 +4,7 @@ import {
   quoteController,
   userController
 } from '../controllers/index.js';
+import authHandler from '../middlewares/authHandler.js'
 
 const router = express.Router();
 
@@ -13,6 +14,8 @@ router.put("/quotes/:name", quoteController.updateQuote);
 router.delete("/quotes/:_id", quoteController.deleteQuote);
 
 router.post("/user", userController.createUser);
+router.post("/login", userController.login);
+router.use(authHandler);//??
 router.get("/users", userController.getUsers);
 router.get("/users/:_id", userController.getSingleUser);
 router.put("/users/:username", userController.updateUser);
