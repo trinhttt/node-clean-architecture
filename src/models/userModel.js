@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import config from '../config/index.js';
-
 mongoose.Promise = global.Promise;
+
 const userSchema = new mongoose.Schema({
     // _id: mongoose.Schema.Types.ObjectId,
     email: {
@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         maxlength: 100,
         minlength: 5,
-        match: [/^[a-zA-Z0-9_-]+$/, 'is invalid'],//??
+        match: [/^[a-zA-Z0-9_-]+$/, 'is invalid'],//regex
         // index: true//??
     },
     password: {
