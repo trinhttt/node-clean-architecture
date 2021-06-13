@@ -1,8 +1,8 @@
 import { quoteRepo } from '../repositories/index.js';
 
 export const quoteService = {
-    async createQuote(name, quote) {
-        return await quoteRepo.createQuote(name, quote);
+    async createQuote(reqBody) {
+        return await quoteRepo.createQuote(reqBody);
     },
     async getAllQuotes() {
         return await quoteRepo.getAllQuotes();
@@ -12,5 +12,8 @@ export const quoteService = {
     },
     async deleteQuote(id) {
         return await quoteRepo.deleteQuote(id);
+    },
+    async getOneByName(name) {
+        return await quoteRepo.getOneByName(name)
     }
 }

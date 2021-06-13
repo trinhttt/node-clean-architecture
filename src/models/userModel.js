@@ -64,6 +64,12 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    quotes: [
+        {
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'Quote',//name of model
+        }
+    ]
 }, {
     //creates a createdAt and updatedAt field on our models that contain timestamps which will get automatically updated when our model changes
     timestamps: true,//?? 

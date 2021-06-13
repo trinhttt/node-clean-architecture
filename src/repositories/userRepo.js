@@ -9,6 +9,7 @@ export const userRepo = {
             lastname: reqBody.lastname,
             gender: reqBody.gender,
             phone: reqBody.phone,
+            quotes: reqBody.quotes,
         })
         newUser.setPassword(reqBody.password);
 
@@ -80,5 +81,9 @@ export const userRepo = {
     },
     async getUserByUserName(username) {
         return await User.findOne({ username: username });
+    },
+    async addQuote(owner, newQuote) {
+        owner.quotes.push(newQuote);
+        return await owner.save();
     }
 }

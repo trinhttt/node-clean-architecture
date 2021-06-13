@@ -12,7 +12,22 @@ const quoteSchema = new mongoose.Schema({
   quote: {
     type: String,
     required: true,
-  }
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',//name of model
+    required: true
+  },
+});
+// After `findOne()` was called
+quoteSchema.pre('findOne', function () {
+  this.populate({
+    path: 'owner',
+    select: 'username phone quotes',
+    gender: 0,
+    // populate the 'quotes' to get all info of quotes
+    populate: { path: 'quotes' }
+  });
 });
 
 export default mongoose.model('Quote', quoteSchema);
