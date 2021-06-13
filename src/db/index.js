@@ -1,14 +1,13 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-dotenv.config();
-const url = process.env.DB_URL
-// mongoose.Promise = global.Promise;
+const url = process.env.DB_URL//?? no need import 'dotenv'
+// mongoose.Promise = global.Promise;//?? purpose?
 
 // // use with local
 // const connectToDb = async () => {
 //     return mongoose.connect(host, { useNewUrlParser: true });
 // };
 const connectToDb = () => {
+    console.log(url)
     mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
     .then(() => {
         console.log("Database connected");

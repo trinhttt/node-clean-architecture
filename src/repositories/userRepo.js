@@ -5,12 +5,13 @@ export const userRepo = {
         const newUser = new User({
             email: reqBody.email,
             username: reqBody.username,
-            password: reqBody.password,
             firstname: reqBody.firstname,
             lastname: reqBody.lastname,
             gender: reqBody.gender,
             phone: reqBody.phone,
         })
+        newUser.setPassword(reqBody.password);
+
         return await newUser.save();
         // return new Promise((resolve, reject) => {
         //     newUser
@@ -62,8 +63,8 @@ export const userRepo = {
         sortOrder[`${order_by}`] = order_direction;
         let filterQuery = {};
         filterQuery = [];
-        filterQuery.push({firstname: {$regex:key, $options:'i'}});
-        filterQuery.push({email: {$regex:key, $options:'i'}});
+        filterQuery.push({firstname: {$regex:key || "", $options:'i'}});
+        filterQuery.push({email: {$regex:key || "", $options:'i'}});
         filterQuery.push({isdeleted: 0});
         console.log(filterQuery);
         // var query = User.find().or({ isdeleted: 0, filterQuery })//isdeleted and filterQuery
@@ -76,5 +77,8 @@ export const userRepo = {
     },
     async countAllUsers() {
         return await User.count();
+    },
+    async getUserByUserName(username) {
+        return await User.findOne({ username: username });
     }
 }
