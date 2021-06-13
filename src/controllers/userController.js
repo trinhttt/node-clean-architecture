@@ -57,9 +57,11 @@ export const userController = {
     async getUsers(req, res, next) {
         console.log("findUsers");
         try {
-            //?? req.query = {} but (req.query == null) is SOMETIME wrong
-            if (req.query == null || 
-                (typeof req.query === 'object' && Object.keys(req.query).length === 0)) {
+            // !req.query / req.query == null is not right
+            // req.query = {} but (req.query == null) is SOMETIME wrong
+            //(typeof req.query === 'object' && Object.keys(req.query).length === 0)
+            const { value } = req.query;
+            if (!value) {
                 const allUsers = await userService.getAllUsers();
                 res.status(200).json({
                     success: true,

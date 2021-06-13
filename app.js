@@ -13,7 +13,7 @@ connectToDb();
 app.use(express.urlencoded({
     extended: true
 }));
-app.use('/api', router);//?? why /api/ is also ok??
+app.use('/api', router);// '/api/' is also ok 
 app.listen(port, function () {
     console.log('Listening on 3000')
 })

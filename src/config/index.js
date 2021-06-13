@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';//?? differ from db/index
+import dotenv from 'dotenv';//have to import becase userModel doesn't import
 dotenv.config();
 
 const secret = process.env.TOKEN_SECRET
