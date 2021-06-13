@@ -10,6 +10,7 @@ export const userRepo = {
             gender: reqBody.gender,
             phone: reqBody.phone,
             quotes: reqBody.quotes,
+            birthday: reqBody.birthday,
         })
         newUser.setPassword(reqBody.password);
 
