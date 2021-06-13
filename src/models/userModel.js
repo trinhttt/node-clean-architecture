@@ -113,4 +113,36 @@ userSchema.methods.toAuthJSON = function () {
     };
 };
 
+userSchema
+    .pre('find', function () {
+        this.populate({
+            path: 'fullHDQuotes',
+            select: 'name quote',//?? auto add owner field
+        });
+    });
+
+userSchema
+    .virtual('fullname')
+    .get(function () {
+        return this.firstname + this.lastname;
+    });
+
+// virtual: is a far more sophisticated approach to fetching referenced Child documents, 
+// and it importantly, takes up less memory for data storage, 
+// as the new key-field Mongoose virtual creates whenever a query is run, 
+// doesn’t persist on the Parent document
+userSchema
+    .virtual('fullHDQuotes', {
+        ref: 'Quote', //The Local Model to use
+        localField: '_id', //Find in Model, where localField 
+        foreignField: 'owner', // is equal to foreignField
+        // use: count: true // And only get the number of docs
+    });
+
+// virtuals are not included in toJSON() and toObject() output by default
+// So `res.json()` and other `JSON.stringify()` functions include virtuals
+userSchema.set('toObject', { virtuals: true });
+
+// So `toObject()` output includes virtuals
+userSchema.set('toJSON', { virtuals: true });
 export default mongoose.model("User", userSchema)
