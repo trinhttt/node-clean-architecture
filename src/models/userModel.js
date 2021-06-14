@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         maxlength: 200,
+        match: [/\S+@\S+\.\S+/, 'is invalid']
     },
     username: {
         type: String,
@@ -18,12 +19,11 @@ const userSchema = new mongoose.Schema({
         minlength: 5,
         match: [/^[a-zA-Z0-9_-]+$/, 'is invalid'],//regex
         // index: true//??
+        unique: true//?? not work
     },
     password: {
         type: String,
         required: true,
-        // maxlength: 200,
-        minlength: 6
     },
     firstname: {
         type: String,
@@ -38,16 +38,29 @@ const userSchema = new mongoose.Schema({
         minlength: 5
     },
     gender: {
-        type: Number,
+        type: String,
         required: true,
+        enum: {
+            values: ['0', '1'],//?? Number not work 
+            message: '{VALUE} is not supported'//Custom Error Messages
+        }
     },
     phone: {
         type: String,
         required: true,
         maxlength: 10,
+        match: [/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/, 'is invalid'],
     },
     birthday: {
         type: Date,
+        validate: {
+            validator: function (value) {
+                console.log(value);
+                const currentTime = new Date();
+                return value.getTime() <= currentTime.getTime();
+            },
+            message: 'Are you a demon?'
+        }
     },
     // avatar: {
     //     type: String,
