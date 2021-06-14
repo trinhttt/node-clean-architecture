@@ -12,6 +12,7 @@ router.post("/quote", quoteController.createQuote);
 router.get("/quotes", quoteController.getAllQuotes);
 router.put("/quotes/:name", quoteController.updateQuote);
 router.delete("/quotes/:_id", quoteController.deleteQuote);
+router.get("/quotes/:name", quoteController.getOneByName);
 
 router.post("/user", userController.createUser);
 router.post("/login", userController.login);

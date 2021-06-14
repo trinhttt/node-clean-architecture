@@ -1,10 +1,12 @@
-import { quoteService } from '../services/index.js';
+import { userService, quoteService } from '../services/index.js';
+
 export const quoteController = {
     async createQuote(req, res, next) {
         try {
-            const name = req.body.name;
-            const quote = req.body.quote;
-            const newQuote = await quoteService.createQuote(name, quote);
+            const newQuote = await quoteService.createQuote(req.body);
+            const owner = await userService.getSingleUser(newQuote.owner);
+            await userService.addQuote(owner, newQuote);
+
             res.status(201).json({
                 success: true,
                 message: 'New quote created successfully',
@@ -59,6 +61,18 @@ export const quoteController = {
         } catch (error) {
             next(error);
         }
-    }
+    },
+    async getOneByName(req, res, next) {
+        try {
+            const quote = await quoteService.getOneByName(req.params.name);
+            res.status(200).json({
+                success: true,
+                message: 'Got list',
+                quote: quote,
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
 }
       

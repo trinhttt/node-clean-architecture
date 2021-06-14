@@ -30,5 +30,8 @@ export const userService = {
             await user.validPassword(password);
             return user.toAuthJSON();
         }
-    }
+    },
+    async addQuote(owner, newQuote) {
+        return await userRepo.addQuote(owner, newQuote);
+    },
 }

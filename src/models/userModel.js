@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         maxlength: 200,
+        match: [/\S+@\S+\.\S+/, 'is invalid']
     },
     username: {
         type: String,
@@ -18,12 +19,11 @@ const userSchema = new mongoose.Schema({
         minlength: 5,
         match: [/^[a-zA-Z0-9_-]+$/, 'is invalid'],//regex
         // index: true//??
+        unique: true//?? not work
     },
     password: {
         type: String,
         required: true,
-        // maxlength: 200,
-        minlength: 6
     },
     firstname: {
         type: String,
@@ -38,16 +38,29 @@ const userSchema = new mongoose.Schema({
         minlength: 5
     },
     gender: {
-        type: Number,
+        type: String,
         required: true,
+        enum: {
+            values: ['0', '1'],//?? Number not work 
+            message: '{VALUE} is not supported'//Custom Error Messages
+        }
     },
     phone: {
         type: String,
         required: true,
         maxlength: 10,
+        match: [/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/, 'is invalid'],
     },
     birthday: {
         type: Date,
+        validate: {
+            validator: function (value) {
+                console.log(value);
+                const currentTime = new Date();
+                return value.getTime() <= currentTime.getTime();
+            },
+            message: 'Are you a demon?'
+        }
     },
     // avatar: {
     //     type: String,
@@ -64,6 +77,12 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    quotes: [
+        {
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'Quote',//name of model
+        }
+    ]
 }, {
     //creates a createdAt and updatedAt field on our models that contain timestamps which will get automatically updated when our model changes
     timestamps: true,//?? 
@@ -107,4 +126,36 @@ userSchema.methods.toAuthJSON = function () {
     };
 };
 
+userSchema
+    .pre('find', function () {
+        this.populate({
+            path: 'fullHDQuotes',
+            select: 'name quote',//?? auto add owner field
+        });
+    });
+
+userSchema
+    .virtual('fullname')
+    .get(function () {
+        return this.firstname + this.lastname;
+    });
+
+// virtual: is a far more sophisticated approach to fetching referenced Child documents, 
+// and it importantly, takes up less memory for data storage, 
+// as the new key-field Mongoose virtual creates whenever a query is run, 
+// doesn’t persist on the Parent document
+userSchema
+    .virtual('fullHDQuotes', {
+        ref: 'Quote', //The Local Model to use
+        localField: '_id', //Find in Model, where localField 
+        foreignField: 'owner', // is equal to foreignField
+        // use: count: true // And only get the number of docs
+    });
+
+// virtuals are not included in toJSON() and toObject() output by default
+// So `res.json()` and other `JSON.stringify()` functions include virtuals
+userSchema.set('toObject', { virtuals: true });
+
+// So `toObject()` output includes virtuals
+userSchema.set('toJSON', { virtuals: true });
 export default mongoose.model("User", userSchema)
