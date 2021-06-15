@@ -1,4 +1,5 @@
 import { userService, quoteService } from '../services/index.js';
+import returnSuccess from '../utilities/successHandler.js'
 
 export const quoteController = {
     async createQuote(req, res, next) {
@@ -6,12 +7,7 @@ export const quoteController = {
             const newQuote = await quoteService.createQuote(req.body);
             const owner = newQuote?.owner ? await userService.getSingleUser(newQuote.owner) : {};
             await userService.addQuote(owner, newQuote);
-
-            res.status(201).json({
-                success: true,
-                message: 'New quote created successfully',
-                quote: newQuote,
-            });
+            returnSuccess(201, res, 'New quote created successfully', newQuote)
         } catch (error) {
             next(error);
             // res.status(500).json({
@@ -24,11 +20,7 @@ export const quoteController = {
     async getAllQuotes(req, res, next) {
         try {
             const allQuotes = await quoteService.getAllQuotes();
-            res.status(200).json({
-                success: true,
-                message: 'Got list',
-                quote: allQuotes,
-            });
+            returnSuccess(200, res, 'Got list', allQuotes)
         } catch (error) {
             next(error);
         }
@@ -39,11 +31,7 @@ export const quoteController = {
             const updateObject = req.body;
         
             const updateQuote = await quoteService.updateQuote(name, updateObject);
-            res.status(200).json({
-                success: true,
-                message: 'Quote was updated',
-                quote: updateObject,
-            });
+            returnSuccess(200, res, 'Quote was updated', updateObject)
         } catch (error) {
             next(error);
         }
@@ -52,12 +40,13 @@ export const quoteController = {
         try {
             const id = req.params._id;
             const resultObject = await quoteService.deleteQuote(id);
-            const success = resultObject == null ? false : true
-            const message = resultObject == null ? 'Can not find this quote' : 'Quote was deleted'
-            res.status(200).json({
-                success: success,
-                message: message,
-            });
+            if (resultObject == null) {
+                throw {
+                    message: 'Can not find this quote',
+                    status: 200
+                }
+            }
+            returnSuccess(200, res, 'Quote was deleted', null)
         } catch (error) {
             next(error);
         }
@@ -65,11 +54,7 @@ export const quoteController = {
     async getOneByName(req, res, next) {
         try {
             const quote = await quoteService.getOneByName(req.params.name);
-            res.status(200).json({
-                success: true,
-                message: 'Got list',
-                quote: quote,
-            });
+            returnSuccess(200, res, 'Got an user', quote);
         } catch (error) {
             next(error);
         }

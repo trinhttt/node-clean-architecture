@@ -1,13 +1,11 @@
 import { userService } from '../services/index.js';
+import returnSuccess from '../utilities/successHandler.js'
+
 export const userController = {
     async createUser(req, res, next) {
         try {
             const newUser = await userService.createUser(req.body);
-            res.status(201).json({
-                success: true,
-                message: 'New user created successfully',
-                user: newUser,
-            });
+            returnSuccess(201, res, 'New user created successfully', newUser)
         } catch (error) {
             next(error);
         }
@@ -16,11 +14,7 @@ export const userController = {
         try {
             const id = req.params._id;
             const singleUser = await userService.getSingleUser(id);
-            res.status(200).json({
-                success: true,
-                message: 'Got list',
-                user: singleUser,
-            });
+            returnSuccess(200, res, 'Got list', singleUser)
         } catch (error) {
             next(error);
         }
@@ -31,11 +25,7 @@ export const userController = {
             const updateObject = req.body;
 
             const updateUser = await userService.updateUser(username, updateObject);
-            res.status(200).json({
-                success: true,
-                message: 'User was updated',
-                user: updateObject,
-            });
+            returnSuccess(200, res, 'User was updated', updateObject)
         } catch (error) {
             next(error);
         }
@@ -44,12 +34,13 @@ export const userController = {
         try {
             const id = req.params._id;
             const resultObject = await userService.deleteUser(id);
-            const success = resultObject == null ? false : true
-            const message = resultObject == null ? 'Can not find this user' : 'User was deleted'
-            res.status(200).json({
-                success: success,
-                message: message,
-            });
+            if (resultObject == null) {
+                throw {
+                    message: 'Can not find this user',
+                    status: 200
+                }
+            }
+            returnSuccess(200, res, 'User was deleted', null)
         } catch (error) {
             next(error);
         }
@@ -63,11 +54,7 @@ export const userController = {
             const { value } = req.query;
             if (!value) {
                 const allUsers = await userService.getAllUsers();
-                res.status(200).json({
-                    success: true,
-                    message: 'Got list',
-                    users: allUsers,
-                });
+                returnSuccess(200, res, 'Got list', allUsers)
             } else {
                 console.log(req.query)
                 const resultObject = await userService.findUsers(req.query);
@@ -76,18 +63,15 @@ export const userController = {
                 const currentPage = req.query.offset / itemsPerPage + 1;
                 const totalPages = total % itemsPerPage == 0 ? total / itemsPerPage : Math.floor(total / itemsPerPage) + 1;
                 console.log(currentPage, resultObject.length, itemsPerPage, totalPages);
-                res.status(200).json({
-                    success: true,
-                    message: 'Got an user list',
-                    data: {
+                const data = {
                         items: resultObject,
                         currentPage: currentPage,
                         itemCount: resultObject.length,
                         itemsPerPage: itemsPerPage,
                         totalItems: total,
                         totalPages: totalPages,
-                    },
-                });
+                    }
+                returnSuccess(200, res, 'Got an user list', data);
             }
         } catch (error) {
             next(error);
@@ -103,11 +87,7 @@ export const userController = {
                     message: 'Login fail',
                 });
             }
-            res.status(201).json({
-                success: true,
-                message: 'Login successfully',
-                user: userInfo,
-            });
+            returnSuccess(200, res, 'Login successfully', userInfo);
         } catch (error) {
             next(error);
         }
@@ -130,12 +110,7 @@ export const userController = {
             }
 
             const userInfo = await userService.loginFB(fbUser)
-
-            res.status(201).json({
-                success: true,
-                message: 'Login successfully',
-                user: userInfo,
-            });
+            returnSuccess(200, res, 'Login successfully', userInfo);
         } catch (error) {
             next(error);
         }
