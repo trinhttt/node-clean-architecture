@@ -114,6 +114,14 @@ export const userController = {
         } catch (error) {
             next(error);
         }
+    },
+    async logout(req, res, next) {
+        try {
+            var expiredUser = await userService.setExpirationDate(req.body._id);
+            returnSuccess(200, res, 'Logged out', null);
+        } catch (error) {
+            next(error);
+        }
     }
 }
 

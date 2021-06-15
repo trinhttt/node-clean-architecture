@@ -38,7 +38,7 @@ export const userRepo = {
         return await User.findOne({facebookId: facebookId});
     },
     async updateUser(username, updateObject) {
-        return await User.findOneAndUpdate({ username: username }, updateObject);
+        return await User.findOneAndUpdate({username: username}, updateObject);
     },
     async deleteUser(id) {
         return await User.findByIdAndRemove(id);
@@ -46,13 +46,13 @@ export const userRepo = {
 
     /**
      * //?key=&limit=&offset=&order_by=&order_direction=
-     * @param {*} searchParams 
+     * @param {*} searchParams
      * search => từ để tìm kiếm
      * limit => số record tối đa
      * offset => bắt đầu từ record thứ mấy
      * order_by => sort field nào
      * order_direction => ('asc' hoặc 'desc') => sort theo thứ tự nào?
-     * @returns 
+     * @returns
      */
 
     // 1/'asc'/'ascending': 1/1 -> 2/1 -> 3/1 or 
@@ -64,17 +64,17 @@ export const userRepo = {
 
     /**
      *  Operators that the schema supports
-        $all, $eq, $exists, $gt, $gte, $in, $lt, $lte, 
-        $ne, $nin, $not, $options, $regex, $type 
+     $all, $eq, $exists, $gt, $gte, $in, $lt, $lte,
+     $ne, $nin, $not, $options, $regex, $type
      */
     async findUsers(searchParams) {
-        const { key, limit, offset, order_by, order_direction } = searchParams;
+        const {key, limit, offset, order_by, order_direction} = searchParams;
         let sortOrder = {};
         sortOrder[`${order_by}`] = order_direction;
         let filterQuery = {};
         filterQuery = [];
-        filterQuery.push({firstname: {$regex:key || "", $options:'i'}});
-        filterQuery.push({email: {$regex:key || "", $options:'i'}});
+        filterQuery.push({firstname: {$regex: key || "", $options: 'i'}});
+        filterQuery.push({email: {$regex: key || "", $options: 'i'}});
         filterQuery.push({isdeleted: 0});
         console.log(filterQuery);
         // var query = User.find().or({ isdeleted: 0, filterQuery })//isdeleted and filterQuery
@@ -88,8 +88,10 @@ export const userRepo = {
     async countAllUsers() {
         return await User.count();
     },
-    async getUserByUserName(username) {
-        return await User.findOne({ username: username });
+    async updateExpDate(filterObject, expSeconds) {
+        var expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + Number(expSeconds/3600/24));
+        return await User.findOneAndUpdate(filterObject, {expirationDate: expirationDate});
     },
     async addQuote(owner, newQuote) {
         owner.quotes.push(newQuote);
