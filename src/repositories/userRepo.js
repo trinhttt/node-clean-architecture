@@ -1,4 +1,5 @@
 import User from '../models/userModel.js';
+import axios from 'axios';
 
 export const userRepo = {
     async createUser(reqBody) {
@@ -12,7 +13,11 @@ export const userRepo = {
             quotes: reqBody.quotes,
             birthday: reqBody.birthday,
         })
-        newUser.setPassword(reqBody.password);
+        if (reqBody.facebookId) {
+            newUser.facebookId = reqBody.facebookId;
+        } else {
+            newUser.setPassword(reqBody.password);
+        }
 
         return await newUser.save();
         // return new Promise((resolve, reject) => {
@@ -27,7 +32,10 @@ export const userRepo = {
         return await User.find();
     },
     async getSingleUser(id) {
-        return User.findById(id);
+        return await User.findById(id);
+    },
+    async getFBUser(facebookId) {
+        return await User.findOne({facebookId: facebookId});
     },
     async updateUser(username, updateObject) {
         return await User.findOneAndUpdate({ username: username }, updateObject);
@@ -86,5 +94,16 @@ export const userRepo = {
     async addQuote(owner, newQuote) {
         owner.quotes.push(newQuote);
         return await owner.save();
+    },
+    async verifyToken(token) {
+        // Full HD link: https://graph.facebook.com/me?fields=email,birthday,name,photos,about,first_name,last_name,gender%20&access_token=
+        const endpoint = "https://graph.facebook.com/me/";
+        const fields = "first_name, last_name, id, email";
+        return await axios.get(endpoint, {
+            params: {
+                access_token: token,
+                fields: fields
+            }
+        })
     }
 }

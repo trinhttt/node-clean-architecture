@@ -16,6 +16,8 @@ router.get("/quotes/:name", quoteController.getOneByName);
 
 router.post("/user", userController.createUser);
 router.post("/login", userController.login);
+router.post("/verify_token", userController.verifyFBToken);
+
 router.use(authHandler);//??
 router.get("/users", userController.getUsers);
 router.get("/users/:_id", userController.getSingleUser);

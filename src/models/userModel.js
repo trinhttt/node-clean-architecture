@@ -6,6 +6,9 @@ mongoose.Promise = global.Promise;
 
 const userSchema = new mongoose.Schema({
     // _id: mongoose.Schema.Types.ObjectId,
+    facebookId: {
+        type: String
+    },
     email: {
         type: String,
         required: true,
@@ -14,32 +17,32 @@ const userSchema = new mongoose.Schema({
     },
     username: {
         type: String,
-        required: true,
+        // required: true,
         maxlength: 100,
         minlength: 5,
         match: [/^[a-zA-Z0-9_-]+$/, 'is invalid'],//regex
         // index: true//??
-        unique: true//?? not work
+        // unique: true//
     },
     password: {
         type: String,
-        required: true,
+        // required: true,
     },
     firstname: {
         type: String,
         required: true,
         maxlength: 100,
-        minlength: 5
+        minlength: 1
     },
     lastname: {
         type: String,
         required: true,
         maxlength: 100,
-        minlength: 5
+        minlength: 1
     },
     gender: {
         type: String,
-        required: true,
+        // required: true,
         enum: {
             values: ['0', '1'],//?? Number not work 
             message: '{VALUE} is not supported'//Custom Error Messages
@@ -47,7 +50,7 @@ const userSchema = new mongoose.Schema({
     },
     phone: {
         type: String,
-        required: true,
+        // required: true,
         maxlength: 10,
         match: [/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/, 'is invalid'],
     },
@@ -109,7 +112,7 @@ userSchema.methods.generateJWT = function () {
     return jwt.sign(
         {
             id: this._id,
-            username: this.username,
+            email: this.email,
         },
             // ACCESS_TOKEN_SECRET//?? store in env and any string?
             config.secret || "trinh_zz_qtqd"
@@ -120,7 +123,7 @@ userSchema.methods.generateJWT = function () {
 
 userSchema.methods.toAuthJSON = function () {
     return {
-        username: this.username,
+        name: this.firstname + " " + this.lastname,
         email: this.email,
         token: this.generateJWT(),
     };

@@ -111,6 +111,34 @@ export const userController = {
         } catch (error) {
             next(error);
         }
+    },
+    async verifyFBToken(req, res, next) {
+        try {
+            const { token } = req.body;
+            const verifyResponse = await userService.verifyToken(token);
+            var fbUser = await userService.getFBUser(verifyResponse.data.id);
+
+            if (fbUser?.facebookId == null) {
+                // Create a new FB user
+                const newUser = {
+                    facebookId: verifyResponse.data.id,
+                    firstname: verifyResponse.data.first_name,
+                    lastname: verifyResponse.data.last_name,
+                    email: verifyResponse.data.email
+                }
+                fbUser = await userService.createUser(newUser);
+            }
+
+            const userInfo = await userService.loginFB(fbUser)
+
+            res.status(201).json({
+                success: true,
+                message: 'Login successfully',
+                user: userInfo,
+            });
+        } catch (error) {
+            next(error);
+        }
     }
 }
 

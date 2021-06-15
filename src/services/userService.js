@@ -31,7 +31,16 @@ export const userService = {
             return user.toAuthJSON();
         }
     },
+    loginFB(fbUser) {
+        return fbUser.toAuthJSON();
+    },
     async addQuote(owner, newQuote) {
         return await userRepo.addQuote(owner, newQuote);
+    },
+    async verifyToken(token) {
+        return await userRepo.verifyToken(token);
+    },
+    async getFBUser(facebookId) {
+        return await userRepo.getFBUser(facebookId);
     },
 }

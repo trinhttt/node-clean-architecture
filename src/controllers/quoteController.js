@@ -4,7 +4,7 @@ export const quoteController = {
     async createQuote(req, res, next) {
         try {
             const newQuote = await quoteService.createQuote(req.body);
-            const owner = await userService.getSingleUser(newQuote.owner);
+            const owner = newQuote?.owner ? await userService.getSingleUser(newQuote.owner) : {};
             await userService.addQuote(owner, newQuote);
 
             res.status(201).json({
