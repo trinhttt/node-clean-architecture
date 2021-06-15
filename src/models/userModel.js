@@ -80,6 +80,11 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    expirationDate: {
+        type: Date,
+        required: true,
+        default: new Date(),
+    },
     quotes: [
         {
             type: mongoose.Schema.Types.ObjectId, 
@@ -117,7 +122,7 @@ userSchema.methods.generateJWT = function () {
             // ACCESS_TOKEN_SECRET//?? store in env and any string?
             config.secret || "trinh_zz_qtqd"
         ,
-        { expiresIn: '86400s' }
+        {expiresIn: `${config.expTime}s`}
     );
 };
 
@@ -125,7 +130,9 @@ userSchema.methods.toAuthJSON = function () {
     return {
         name: this.firstname + " " + this.lastname,
         email: this.email,
+        id: this._id,
         token: this.generateJWT(),
+        expirationDate: this.expirationDate
     };
 };
 

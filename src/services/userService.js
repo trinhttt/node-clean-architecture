@@ -1,4 +1,5 @@
 import { userRepo } from '../repositories/index.js';
+import config from '../config/index.js';
 
 export const userService = {
     async createUser(name, user) {
@@ -23,7 +24,8 @@ export const userService = {
         return await userRepo.countAllUsers();
     },
     async login(username, password) {
-        let user = await userRepo.getUserByUserName(username);
+        const filterObject = {username: username}
+        let user = await userRepo.updateExpDate(filterObject, config.expTime);
         if (!user) {
             return null;
         } else {
@@ -31,7 +33,9 @@ export const userService = {
             return user.toAuthJSON();
         }
     },
-    loginFB(fbUser) {
+    async loginFB(fbUser) {
+        const filterObject = {facebookId: fbUser.facebookId}
+        await userRepo.updateExpDate(filterObject, config.expTime);
         return fbUser.toAuthJSON();
     },
     async addQuote(owner, newQuote) {
@@ -43,4 +47,15 @@ export const userService = {
     async getFBUser(facebookId) {
         return await userRepo.getFBUser(facebookId);
     },
+    async setExpirationDate(id) {
+        const filterObject = {_id: id}
+        const lifeTime = 0
+        return await userRepo.updateExpDate(filterObject, lifeTime);
+    },
+    async checkExpTime(id) {
+        const user = await userRepo.getSingleUser(id);
+        // let userExpTime = user.expirationDate.getSeconds();
+        let today = new Date();
+        return user.expirationDate > today ? true : false
+    }
 }

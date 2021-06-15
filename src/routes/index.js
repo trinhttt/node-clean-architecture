@@ -23,5 +23,6 @@ router.get("/users", userController.getUsers);
 router.get("/users/:_id", userController.getSingleUser);
 router.put("/users/:username", userController.updateUser);
 router.delete("/users/:_id", userController.deleteUser);
+router.post("/logout", userController.logout);//update object get or post??
 
 export default router;
