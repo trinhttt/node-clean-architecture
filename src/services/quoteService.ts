@@ -1,4 +1,4 @@
-import { quoteRepo } from '../repositories/index.js';
+import { quoteRepo } from '../repositories/index';
 
 export const quoteService = {
     async createQuote(reqBody) {

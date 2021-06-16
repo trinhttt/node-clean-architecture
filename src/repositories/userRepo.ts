@@ -1,9 +1,12 @@
-import User from '../models/userModel.js';
+// import {User, IUser} from '../models/userModel';
 import axios from 'axios';
+import { Document, Model, model , Schema} from "mongoose";
+
+var User = model('User'); 
 
 export const userRepo = {
     async createUser(reqBody) {
-        const newUser = new User({
+        const newUser: any = await User.create({
             email: reqBody.email,
             username: reqBody.username,
             firstname: reqBody.firstname,
@@ -71,8 +74,7 @@ export const userRepo = {
         const {key, limit, offset, order_by, order_direction} = searchParams;
         let sortOrder = {};
         sortOrder[`${order_by}`] = order_direction;
-        let filterQuery = {};
-        filterQuery = [];
+        let filterQuery = [];
         filterQuery.push({firstname: {$regex: key || "", $options: 'i'}});
         filterQuery.push({email: {$regex: key || "", $options: 'i'}});
         filterQuery.push({isdeleted: 0});

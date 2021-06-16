@@ -1,10 +1,37 @@
-import mongoose from "mongoose";
+import { Document, Model, model , Schema} from "mongoose";
+import  bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
-import config from '../config/index.js';
-mongoose.Promise = global.Promise;
+import config from '../config/index';
+// mongoose.Promise = global.Promise;
+// import { model, Schema, Document } from 'mongoose';
 
-const userSchema = new mongoose.Schema({
+// const userSchema = new mongoose.Schema<IUser>({
+//   email: { type: String, required: true, unique: true },
+//   password: { type: String, required: true },
+//   name: { type: String, required: true }
+// });s
+
+interface IUser extends Document {
+    facebookId?: string;
+    email?: string;
+    username?: string;
+    password?: String,
+    firstname?: String,
+    lastname?: String,
+    gender?: String,
+    phone?: String,
+    birthday?: Date,
+    created_at?: Date,
+    updated_at?: Date,
+    isdeleted?: Number,
+    expirationDate?: Date
+    quotes?: Schema.Types.ObjectId,
+    generateJWT?(): String,
+    setPassword?(password): any,
+    validPassword?(password): any,
+    toAuthJSON?(): any,
+}
+const userSchema: Schema = new Schema({
     // _id: mongoose.Schema.Types.ObjectId,
     facebookId: {
         type: String
@@ -87,7 +114,7 @@ const userSchema = new mongoose.Schema({
     },
     quotes: [
         {
-            type: mongoose.Schema.Types.ObjectId, 
+            type: Schema.Types.ObjectId,
             ref: 'Quote',//name of model
         }
     ]
@@ -95,12 +122,12 @@ const userSchema = new mongoose.Schema({
     //creates a createdAt and updatedAt field on our models that contain timestamps which will get automatically updated when our model changes
     timestamps: true,//?? 
 })
-userSchema.methods.setPassword = function (password) {
+userSchema.methods.setPassword = function (this: IUser, password: string) {
     console.log("setPassword");
     this.password = bcrypt.hashSync(password, 10);
 };
 
-userSchema.methods.validPassword = async function (password) {
+userSchema.methods.validPassword = async function (this: IUser, password: string) {
     console.log("validPassword");
     //(textPassword, hash)
     const isCorrectPass = await bcrypt.compare(password, this.password)
@@ -113,20 +140,20 @@ userSchema.methods.validPassword = async function (password) {
         };
     }
 };
-userSchema.methods.generateJWT = function () {
+userSchema.methods.generateJWT = function (this: IUser) {
     return jwt.sign(
         {
             id: this._id,
             email: this.email,
         },
-            // ACCESS_TOKEN_SECRET//?? store in env and any string?
-            config.secret || "trinh_zz_qtqd"
+        // ACCESS_TOKEN_SECRET//?? store in env and any string?
+        config.secret || "trinh_zz_qtqd"
         ,
-        {expiresIn: `${config.expTime}s`}
+        { expiresIn: `${config.expTime}s` }
     );
 };
 
-userSchema.methods.toAuthJSON = function () {
+userSchema.methods.toAuthJSON = function (this: IUser) {
     return {
         name: this.firstname + " " + this.lastname,
         email: this.email,
@@ -136,8 +163,7 @@ userSchema.methods.toAuthJSON = function () {
     };
 };
 
-userSchema
-    .pre('find', function () {
+userSchema.pre("find", function () {
         this.populate({
             path: 'fullHDQuotes',
             select: 'name quote',//?? auto add owner field
@@ -168,4 +194,8 @@ userSchema.set('toObject', { virtuals: true });
 
 // So `toObject()` output includes virtuals
 userSchema.set('toJSON', { virtuals: true });
-export default mongoose.model("User", userSchema)
+// const User: Model<IUser> = model('User', userSchema);
+
+// export default model<IUser>("User", userSchema)
+var User: Model<IUser> = model('User', userSchema);
+export {User, IUser};

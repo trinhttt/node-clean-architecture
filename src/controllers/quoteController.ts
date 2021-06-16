@@ -1,10 +1,10 @@
-import { userService, quoteService } from '../services/index.js';
-import returnSuccess from '../utilities/successHandler.js'
+import { userService, quoteService } from '../services/index';
+import returnSuccess from '../utilities/successHandler'
 
 export const quoteController = {
     async createQuote(req, res, next) {
         try {
-            const newQuote = await quoteService.createQuote(req.body);
+            const newQuote: any = await quoteService.createQuote(req.body);
             const owner = newQuote?.owner ? await userService.getSingleUser(newQuote.owner) : {};
             await userService.addQuote(owner, newQuote);
             returnSuccess(201, res, 'New quote created successfully', newQuote)

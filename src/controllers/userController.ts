@@ -1,5 +1,5 @@
-import { userService } from '../services/index.js';
-import returnSuccess from '../utilities/successHandler.js'
+import { userService } from '../services/index';
+import returnSuccess from '../utilities/successHandler'
 
 export const userController = {
     async createUser(req, res, next) {
@@ -96,7 +96,7 @@ export const userController = {
         try {
             const { token } = req.body;
             const verifyResponse = await userService.verifyToken(token);
-            var fbUser = await userService.getFBUser(verifyResponse.data.id);
+            var fbUser: any = await userService.getFBUser(verifyResponse.data.id);
 
             if (fbUser?.facebookId == null) {
                 // Create a new FB user

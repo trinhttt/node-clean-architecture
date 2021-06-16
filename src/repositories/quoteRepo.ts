@@ -1,5 +1,5 @@
-import Quote from '../models/quoteModel.js';
-import mongoose from 'mongoose';
+import {Quote, IQuote} from '../models/quoteModel';
+import * as mongoose from 'mongoose';
 
 export const quoteRepo = {
     async createQuote(reqBody) {

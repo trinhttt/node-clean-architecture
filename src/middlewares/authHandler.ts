@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import {userService} from '../services/index.js';
+import {userService} from '../services/index';
 
 export default async (req, res, next) => {
     try {

@@ -1,9 +1,9 @@
-import { userRepo } from '../repositories/index.js';
-import config from '../config/index.js';
+import { userRepo } from '../repositories/index';
+import config from '../config/index';
 
 export const userService = {
-    async createUser(name, user) {
-        return await userRepo.createUser(name, user);
+    async createUser(user) {
+        return await userRepo.createUser(user);
     },
     async getAllUsers() {
         return await userRepo.getAllUsers();
@@ -25,7 +25,7 @@ export const userService = {
     },
     async login(username, password) {
         const filterObject = {username: username}
-        let user = await userRepo.updateExpDate(filterObject, config.expTime);
+        let user: any = await userRepo.updateExpDate(filterObject, config.expTime);
         if (!user) {
             return null;
         } else {
@@ -53,7 +53,7 @@ export const userService = {
         return await userRepo.updateExpDate(filterObject, lifeTime);
     },
     async checkExpTime(id) {
-        const user = await userRepo.getSingleUser(id);
+        const user: any = await userRepo.getSingleUser(id);
         // let userExpTime = user.expirationDate.getSeconds();
         let today = new Date();
         return user.expirationDate > today ? true : false

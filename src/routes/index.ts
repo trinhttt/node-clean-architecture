@@ -1,12 +1,12 @@
-import express from 'express';
+import express, {Router} from 'express';
 
 import {
   quoteController,
   userController
-} from '../controllers/index.js';
-import authHandler from '../middlewares/authHandler.js'
+} from '../controllers/index';
+import authHandler from '../middlewares/authHandler'
 
-const router = express.Router();
+const router = Router();
 
 router.post("/quote", quoteController.createQuote);
 router.get("/quotes", quoteController.getAllQuotes);
