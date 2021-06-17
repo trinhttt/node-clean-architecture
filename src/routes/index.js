@@ -23,6 +23,7 @@ router.get("/users", userController.getUsers);
 router.get("/users/:_id", userController.getSingleUser);
 router.put("/users/:username", userController.updateUser);
 router.delete("/users/:_id", userController.deleteUser);
-router.post("/logout", userController.logout);//update object get or post??
-
+//Way1: store expiration time in user doc, set equal today when logout
+// router.post("/logout", userController.logout);//update object get or post??
+router.get("/logout", userController.logoutWithSession);
 export default router;

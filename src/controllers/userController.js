@@ -64,13 +64,13 @@ export const userController = {
                 const totalPages = total % itemsPerPage == 0 ? total / itemsPerPage : Math.floor(total / itemsPerPage) + 1;
                 console.log(currentPage, resultObject.length, itemsPerPage, totalPages);
                 const data = {
-                        items: resultObject,
-                        currentPage: currentPage,
-                        itemCount: resultObject.length,
-                        itemsPerPage: itemsPerPage,
-                        totalItems: total,
-                        totalPages: totalPages,
-                    }
+                    items: resultObject,
+                    currentPage: currentPage,
+                    itemCount: resultObject.length,
+                    itemsPerPage: itemsPerPage,
+                    totalItems: total,
+                    totalPages: totalPages,
+                }
                 returnSuccess(200, res, 'Got an user list', data);
             }
         } catch (error) {
@@ -81,6 +81,8 @@ export const userController = {
         try {
             const { username, password } = req.body;
             const userInfo = await userService.login(username, password);
+            req.session.userId = userInfo.id
+            console.log(req.session)
             if (userInfo == null) {
                 res.status(200).json({
                     success: false,
@@ -120,6 +122,19 @@ export const userController = {
             var expiredUser = await userService.setExpirationDate(req.body._id);
             returnSuccess(200, res, 'Logged out', null);
         } catch (error) {
+            next(error);
+        }
+    },
+    async logoutWithSession(req, res, next) {
+        try {
+            if (req.session) {
+                console.log("destroy")
+                // delete session object
+                await req.session.destroy();
+                returnSuccess(200, res, 'Logged out', null);
+            }
+        }
+        catch (error) {
             next(error);
         }
     }
